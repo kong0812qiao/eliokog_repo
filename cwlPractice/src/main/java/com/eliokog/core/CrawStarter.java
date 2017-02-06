@@ -2,7 +2,7 @@ package com.eliokog.core;
 
 import com.eliokog.fetcher.FetcherResult;
 import com.eliokog.fetcher.HttpClientFetcher;
-import com.eliokog.parser.HTMLPaser;
+import com.eliokog.parser.HTMLParser;
 import com.eliokog.parser.Parser;
 import com.eliokog.url.WebURL;
 
@@ -17,8 +17,8 @@ public class CrawStarter {
         url.setTimeout(1000);
         HttpClientFetcher httpClientFetcher = new HttpClientFetcher();
         FetcherResult result = httpClientFetcher.fetch(url);
-        Parser paser = new HTMLPaser();
-//        paser.parse(result);
+        Parser paser = new HTMLParser();
+        paser.parse(result);
     }
 
 }

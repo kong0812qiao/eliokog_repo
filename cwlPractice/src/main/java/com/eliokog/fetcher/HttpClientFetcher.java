@@ -35,7 +35,7 @@ public class HttpClientFetcher {
         FetcherResult result = new FetcherResult();
         result.setUrl(url);
         try {
-            RequestBuilder requestBuilder =  requestBuilder(url);
+            RequestBuilder requestBuilder = requestBuilder(url);
             RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                     .setConnectionRequestTimeout(url.getTimeout())
                     .setSocketTimeout(url.getTimeout())
@@ -47,26 +47,26 @@ public class HttpClientFetcher {
             if (response.getStatusLine().getStatusCode() < 300 && response.getStatusLine().getStatusCode() > 199) {
                 String content = IOUtils.toString(response.getEntity().getContent());
                 result.setContent(content);
+                System.out.println(content);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(result);
         return result;
     }
 
     public RequestBuilder requestBuilder(WebURL url) {
-        if(url.getMethod()==null|| url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.GET))){
+        if (url.getMethod() == null || url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.GET))) {
             return RequestBuilder.get();
-        }else if( url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.PUT))){
+        } else if (url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.PUT))) {
             return RequestBuilder.put();
-        }else if( url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.POST))){
+        } else if (url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.POST))) {
             return RequestBuilder.post();
-        }else if( url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.HEAD))){
+        } else if (url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.HEAD))) {
             return RequestBuilder.head();
-        }else if( url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.DELETE))){
+        } else if (url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.DELETE))) {
             return RequestBuilder.delete();
-        }else if( url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.TRACE))){
+        } else if (url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.TRACE))) {
             return RequestBuilder.trace();
         }
 
