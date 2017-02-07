@@ -1,15 +1,42 @@
 package com.eliokog.parser;
 
+import com.eliokog.fetcher.FetcherResult;
+import com.eliokog.url.WebURL;
+import com.eliokog.util.Validator;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+
+import static javafx.beans.binding.Bindings.select;
 
 /**
  * Created by eliokog on 2017/2/6.
  */
 public class ZhihuProcessor implements Processor {
     @Override
-    public Elements process(Document doc) {
+    public FetcherResult process(FetcherResult result) {
+        Document doc = Jsoup.parse(result.getContent());
+        Elements links = doc.select("a.question_link");
 
-        return null;
+        LinkedHashSet<WebURL> parsedLinkSet = new LinkedHashSet<>();
+        LinkedHashMap<String, String> parsedValMap = new LinkedHashMap<>();
+
+        for(Element e : links){
+            String url = e.attr("href");
+            parsedLinkSet.add(new WebURL("https://www.zhihu.com" + url));
+        }
+        result.setParsedList(new LinkedList<WebURL>(parsedLinkSet));
+
+        parsedValMap.put("Title: ", Validator.nullStringChecker(doc.select("h2.zm-item-title").first()));
+        parsedValMap.put("Question: ", Validator.nullStringChecker(doc.select("title")));
+        parsedValMap.put("Answer: ", Validator.nullStringChecker(doc.select("div.zm-editable-content ")));
+        result.setFieldMap(parsedValMap);
+        System.out.println(parsedValMap);
+        return result;
     }
 }

@@ -3,10 +3,17 @@ package com.eliokog.fetcher;
 import com.eliokog.url.WebURL;
 import org.apache.http.Header;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+
 /**
  * Result entity for fetcher
  */
 public class FetcherResult {
+
+    private LinkedHashMap<String, String> fieldMap;
+
+    private LinkedList<WebURL> parsedList;
 
     int statusCode;
 
@@ -46,6 +53,21 @@ public class FetcherResult {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public LinkedList<WebURL> getParsedList() {
+        return parsedList;
+    }
+
+    public void setParsedList(LinkedList<WebURL> parsedList) {
+        this.parsedList = parsedList;
+    }
+    public LinkedHashMap<String, String> getFieldMap() {
+        return fieldMap;
+    }
+
+    public void setFieldMap(LinkedHashMap<String, String> fieldMap) {
+        this.fieldMap = fieldMap;
     }
 
     @Override

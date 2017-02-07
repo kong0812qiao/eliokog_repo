@@ -1,6 +1,7 @@
 package com.eliokog.parser;
 
 import com.eliokog.fetcher.FetcherResult;
+import com.eliokog.url.WebURL;
 
 import java.util.LinkedHashSet;
 
@@ -9,7 +10,13 @@ import java.util.LinkedHashSet;
  */
 public class JSONParser implements Parser {
 
-    public LinkedHashSet<String> parse(FetcherResult result) {
+    @Override
+    public FetcherResult parse(FetcherResult result) {
         return null;
+    }
+
+    @Override
+    public void setProcessor(Processor processor) {
+
     }
 }

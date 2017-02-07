@@ -1,10 +1,10 @@
 package com.eliokog.core;
 
-import com.eliokog.fetcher.FetcherResult;
-import com.eliokog.fetcher.HttpClientFetcher;
+import com.eliokog.frontier.PersiterQueue;
 import com.eliokog.parser.HTMLParser;
-import com.eliokog.parser.Parser;
-import com.eliokog.url.WebURL;
+import com.eliokog.parser.ZhihuProcessor;
+import com.eliokog.persister.FilerPersister;
+import com.eliokog.frontier.PersistWorker;
 
 /**
  * Created by eliokog on 2017/1/12.
@@ -12,13 +12,14 @@ import com.eliokog.url.WebURL;
 public class CrawStarter {
 
     public static void main(String[] args) {
-//        WebURL url = new WebURL("http://flashsword20.iteye.com/");
-        WebURL url = new WebURL("https://www.zhihu.com/explore");
-        url.setTimeout(1000);
-        HttpClientFetcher httpClientFetcher = new HttpClientFetcher();
-        FetcherResult result = httpClientFetcher.fetch(url);
-        Parser paser = new HTMLParser();
-        paser.parse(result);
+        PersiterQueue persiterQueue = new PersiterQueue();
+        PersistWorker.build().withQueue(persiterQueue).withPersister(new FilerPersister()).start();
+
+        Crawler.build().withURL("https://www.zhihu.com/explore")
+                .withParser(new HTMLParser())
+                .withProcessor(new ZhihuProcessor())
+                .withPersistQueue(persiterQueue).start();
+
     }
 
 }

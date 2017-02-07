@@ -23,6 +23,10 @@ public class WorkQueue {
         queue.offer(url, 10000, TimeUnit.MICROSECONDS);
     }
 
+    public WebURL deQueue() throws InterruptedException {
+        return queue.take();
+    }
+
     public BlockingQueue<WebURL> getQueue() {
         return queue;
     }
