@@ -9,12 +9,18 @@ import com.eliokog.parser.Parser;
 import com.eliokog.parser.Processor;
 import com.eliokog.parser.ZhihuProcessor;
 import com.eliokog.url.WebURL;
+import com.eliokog.util.SystemPropertyUtil;
+import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.*;
 
 /**
  * Created by eliokog on 2017/2/7.
  */
 public class Crawler {
-
+    private static final Logger logger = LoggerFactory.getLogger(Crawler.class);
     private boolean isTerminated = false;
 
     private WebURL url;
@@ -25,9 +31,11 @@ public class Crawler {
 
     private Parser parser;
 
+    ExecutorService executor;
 
-    private Crawler(){
-        workQueue =  new WorkQueue();
+    private Crawler() {
+        workQueue = new WorkQueue();
+        executor = new ThreadPoolExecutor(SystemPropertyUtil.getIntProperty("com.eliokog.crawlerThreads"), SystemPropertyUtil.getIntProperty("com.eliokog.crawlerThreads")*2, 10000, TimeUnit.MICROSECONDS, new ArrayBlockingQueue<Runnable>(1000), new ThreadPoolExecutor.DiscardOldestPolicy());
     }
 
     public Crawler withURL(String url) {
@@ -46,30 +54,37 @@ public class Crawler {
         return this;
     }
 
-    public Crawler withPersistQueue(PersiterQueue persiterQueue){
-        this.persiterQueue =  persiterQueue;
+    public Crawler withPersistQueue(PersiterQueue persiterQueue) {
+        this.persiterQueue = persiterQueue;
         return this;
     }
-    public void start() {
-        HttpClientFetcher httpClientFetcher = new HttpClientFetcher();
-        FetcherResult result = httpClientFetcher.fetch(url);
-        parser.parse(result);
-        enQueue(result);
-        while (!Thread.interrupted() && !isTerminated) {
-            try {
-                //TODO the thread was waiting on lock here for http client, need check further.
-                result = httpClientFetcher.fetch(workQueue.deQueue());
-                parser.parse(result);
-                enQueue(result);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Thread.currentThread().interrupt();
-            }
 
-        }
+    public void start() {
+      new Thread(()-> {
+          HttpClientFetcher httpClientFetcher = new HttpClientFetcher();
+          FetcherResult result = httpClientFetcher.fetch(url);
+          parser.parse(result);
+          enQueue(result);
+
+          while (!Thread.interrupted() && !isTerminated) {
+              try {
+                  WebURL url = workQueue.deQueue();
+                  logger.debug("start to crawle link: {}", url.getURL());
+                  executor.submit(() -> {
+                      FetcherResult res = httpClientFetcher.fetch(url);
+                      parser.parse(res);
+                      enQueue(res);
+                  });
+              } catch (InterruptedException e) {
+                  e.printStackTrace();
+                  Thread.currentThread().interrupt();
+              }
+          }
+
+      }).start();
     }
 
-    public void enQueue(FetcherResult result){
+    public void enQueue(FetcherResult result) {
         result.getParsedList().forEach((crawledURL) -> {
             try {
                 this.workQueue.enQueue(crawledURL);
@@ -77,14 +92,16 @@ public class Crawler {
                 e.printStackTrace();
             }
         });
-        result.getFieldMap().forEach((k, v) -> {
-            try {
-                this.persiterQueue.enQueue(k + " :" + v);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        StringBuilder sb = new StringBuilder();
+        result.getFieldMap().forEach((k, v) -> sb.append(k).append(" :").append(v).append("\r\n"));
+        try {
+            this.persiterQueue.enQueue(sb.toString());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            //TODO error handling here
+        }
     }
+
     public static Crawler build() {
         return new Crawler();
     }

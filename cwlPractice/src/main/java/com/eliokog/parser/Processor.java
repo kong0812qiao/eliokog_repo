@@ -12,6 +12,6 @@ import java.util.LinkedHashSet;
  */
 public interface Processor {
 
-    public FetcherResult process(FetcherResult result);
+    FetcherResult process(FetcherResult result);
 
 }

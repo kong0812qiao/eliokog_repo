@@ -1,5 +1,8 @@
 package com.eliokog.url;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * WebURL entity used for Fetcher
  * normal URL looks like: <scheme>://<net_loc>/<path>;<params>?<query>#<fragment>
@@ -8,12 +11,27 @@ package com.eliokog.url;
 public class WebURL {
 
 
+    public java.net.URL getNetURL() {
+        return netURL;
+    }
+
+    public void setNetURL(java.net.URL netURL) {
+        this.netURL = netURL;
+    }
+
+    private URL netURL;
     public WebURL(){
 
     }
 
     public WebURL(String url){
         this.URL = url;
+        try {
+            this.netURL = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     String URL;

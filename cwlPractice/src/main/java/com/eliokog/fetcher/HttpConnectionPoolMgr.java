@@ -1,5 +1,6 @@
 package com.eliokog.fetcher;
 
+import com.eliokog.util.SystemPropertyUtil;
 import org.apache.http.HttpHost;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -19,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by eliokog on 2017/2/7.
+ * Manages the connection pool for httpclient
  */
 public class HttpConnectionPoolMgr {
    public static PoolingHttpClientConnectionManager connectionManager;
@@ -31,9 +33,10 @@ public class HttpConnectionPoolMgr {
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
                 .register("https", sslsf)
                 .build();
+        //TODO make the pool size configurable
         connectionManager = new PoolingHttpClientConnectionManager(reg);
-        connectionManager.setDefaultMaxPerRoute(10);
-        connectionManager.setMaxTotal(30);
+        connectionManager.setDefaultMaxPerRoute(SystemPropertyUtil.getIntProperty("com.eliokog.connectionPool"));
+        connectionManager.setMaxTotal(300);
 //        CloseableHttpClient httpClient = HttpClients.custom()
 //                .setConnectionManager(cm)
 //                .build();

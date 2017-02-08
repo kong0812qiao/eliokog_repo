@@ -1,6 +1,7 @@
 package com.eliokog.frontier;
 
 import com.eliokog.url.WebURL;
+import com.eliokog.util.SystemPropertyUtil;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -15,7 +16,7 @@ public class PersiterQueue{
     private BlockingQueue<String> queue;
 
     public PersiterQueue(){
-        queue =  new ArrayBlockingQueue<String>(10000);
+        queue =  new ArrayBlockingQueue<String>(SystemPropertyUtil.getIntProperty("com.eliokog.persistQueueSize"));
     }
 
        public void enQueue(String  value) throws InterruptedException {
@@ -26,6 +27,9 @@ public class PersiterQueue{
         return queue.take();
     }
 
+    public int size(){
+        return queue.size();
+    }
 
     public BlockingQueue<String> getQueue() {
         return queue;

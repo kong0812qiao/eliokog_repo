@@ -2,7 +2,9 @@ package com.eliokog.parser;
 
 import com.eliokog.fetcher.FetcherResult;
 import com.eliokog.url.WebURL;
+import com.eliokog.util.URLUtils;
 import com.eliokog.util.Validator;
+import org.apache.commons.codec.binary.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,10 +27,12 @@ public class ZhihuProcessor implements Processor {
 
         LinkedHashSet<WebURL> parsedLinkSet = new LinkedHashSet<>();
         LinkedHashMap<String, String> parsedValMap = new LinkedHashMap<>();
-
+        //TODO add duplicate removal logic here
         for(Element e : links){
-            String url = e.attr("href");
-            parsedLinkSet.add(new WebURL("https://www.zhihu.com" + url));
+            String url = URLUtils.getFullURL(e.attr("href"),result);
+            if(result.getUrl().getURL()!= url){
+                parsedLinkSet.add(new WebURL(url));
+            }
         }
         result.setParsedList(new LinkedList<WebURL>(parsedLinkSet));
 
@@ -36,7 +40,6 @@ public class ZhihuProcessor implements Processor {
         parsedValMap.put("Question: ", Validator.nullStringChecker(doc.select("title")));
         parsedValMap.put("Answer: ", Validator.nullStringChecker(doc.select("div.zm-editable-content ")));
         result.setFieldMap(parsedValMap);
-        System.out.println(parsedValMap);
         return result;
     }
 }

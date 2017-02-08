@@ -1,6 +1,7 @@
 package com.eliokog.frontier;
 
 import com.eliokog.url.WebURL;
+import com.eliokog.util.SystemPropertyUtil;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -16,7 +17,7 @@ public class WorkQueue {
     private BlockingQueue<WebURL> queue;
 
     public WorkQueue(){
-        queue =  new ArrayBlockingQueue<WebURL>(10000);
+        queue =  new ArrayBlockingQueue<WebURL>(SystemPropertyUtil.getIntProperty("com.eliokog.workQueueSize"));
     }
 
     public void enQueue(WebURL url) throws InterruptedException {

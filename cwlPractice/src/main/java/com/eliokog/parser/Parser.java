@@ -10,6 +10,6 @@ import java.util.LinkedHashSet;
  */
 public interface Parser {
 
-    public FetcherResult parse(FetcherResult result);
-    public void setProcessor(Processor processor) ;
+    FetcherResult parse(FetcherResult result);
+    void setProcessor(Processor processor) ;
 }

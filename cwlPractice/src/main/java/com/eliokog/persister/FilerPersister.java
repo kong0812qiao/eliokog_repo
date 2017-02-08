@@ -1,5 +1,6 @@
 package com.eliokog.persister;
 
+import com.eliokog.util.SystemPropertyUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.*;
@@ -13,7 +14,7 @@ public class FilerPersister implements Persister {
 
     public FilerPersister(){
         try {
-            printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream("C:\\eliokog\\123\\crawler.log"), "UTF-8"));
+            printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(SystemPropertyUtil.getStringProperty("com.eliokog.crawleFile")), "UTF-8"));
         }catch (IOException e) {
             e.printStackTrace();
         }
