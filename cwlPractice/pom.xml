@@ -40,11 +40,11 @@
             <artifactId>json-path</artifactId>
         </dependency>-->
 
-        <dependency>
+<!--        <dependency>
             <groupId>us.codecraft</groupId>
             <artifactId>xsoup</artifactId>
             <version>0.3.1</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -57,6 +57,40 @@
             <artifactId>logback-classic</artifactId>
             <version>1.0.9</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+
+        <!-- apache POI -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.9</version>
+        </dependency>
+
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

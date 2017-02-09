@@ -33,7 +33,7 @@ public class PersistWorker {
                 () -> {
                     while (true) {
                         try {
-                            persister.append(queue.deQueue());
+                            persister.persist(queue.deQueue());
 
                         } catch (InterruptedException e) {
                             e.printStackTrace();

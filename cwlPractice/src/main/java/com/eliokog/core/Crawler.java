@@ -4,13 +4,10 @@ import com.eliokog.fetcher.FetcherResult;
 import com.eliokog.fetcher.HttpClientFetcher;
 import com.eliokog.frontier.PersiterQueue;
 import com.eliokog.frontier.WorkQueue;
-import com.eliokog.parser.HTMLParser;
 import com.eliokog.parser.Parser;
 import com.eliokog.parser.Processor;
-import com.eliokog.parser.ZhihuProcessor;
 import com.eliokog.url.WebURL;
 import com.eliokog.util.SystemPropertyUtil;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +56,19 @@ public class Crawler {
         return this;
     }
 
+    public Crawler withWorkQueue( WorkQueue workQueue){
+        this.workQueue = workQueue;
+        return this;
+    }
+
     public void start() {
       new Thread(()-> {
           HttpClientFetcher httpClientFetcher = new HttpClientFetcher();
-          FetcherResult result = httpClientFetcher.fetch(url);
-          parser.parse(result);
-          enQueue(result);
+          if(null!=url) {
+              FetcherResult result = httpClientFetcher.fetch(url);
+              parser.parse(result);
+              enQueue(result);
+          }
 
           while (!Thread.interrupted() && !isTerminated) {
               try {
@@ -92,8 +96,15 @@ public class Crawler {
                 e.printStackTrace();
             }
         });
+        //refactor the enqueue logic
         StringBuilder sb = new StringBuilder();
-        result.getFieldMap().forEach((k, v) -> sb.append(k).append(" :").append(v).append("\r\n"));
+        result.getFieldMap().forEach((k, v) ->
+        {
+            if(sb.length()>0){
+                sb.append("%");
+            }
+            sb.append(v);
+        });
         try {
             this.persiterQueue.enQueue(sb.toString());
         } catch (InterruptedException e) {

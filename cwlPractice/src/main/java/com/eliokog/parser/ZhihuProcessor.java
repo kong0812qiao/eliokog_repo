@@ -29,7 +29,7 @@ public class ZhihuProcessor implements Processor {
         LinkedHashMap<String, String> parsedValMap = new LinkedHashMap<>();
         //TODO add duplicate removal logic here
         for(Element e : links){
-            String url = URLUtils.getFullURL(e.attr("href"),result);
+            String url = URLUtils.getFullURL(e.attr("href"),result.getUrl());
             if(result.getUrl().getURL()!= url){
                 parsedLinkSet.add(new WebURL(url));
             }

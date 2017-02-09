@@ -21,12 +21,12 @@ public class FilerPersister implements Persister {
     }
 
     @Override
-    public void append(String s) {
-        printWriter.print(s);
-
+    public void persist(String s) {
+        printWriter.write(s);
+        printWriter.flush();
     }
 
-
+    @Override
     public void destory(){
         printWriter.close();
     }
