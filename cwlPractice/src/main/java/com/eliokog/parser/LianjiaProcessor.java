@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.sun.org.apache.xerces.internal.impl.xpath.regex.CaseInsensitiveMap.get;
 import static com.sun.org.apache.xml.internal.serialize.LineSeparator.Web;
@@ -109,7 +111,11 @@ public class LianjiaProcessor implements Processor {
         String area =  StringUtils.split(infos[0], " ")[1];
         String floor = infos[1];
         String orientation = infos[2];
-        String decoration = StringUtils.split(infos[3], " ")[0];
+
+        String decoration = "N/A";
+        if(infos.length>3) {
+            decoration = StringUtils.split(infos[3], " ")[0];
+        }
         String state = "N/A", line = "N/A", station = "N/A", introduction ="N/A";
         Elements otherInfo = data.select("div.introduce");
         if(null!=otherInfo && otherInfo.size()>0){
@@ -118,8 +124,8 @@ public class LianjiaProcessor implements Processor {
              for(String s : introduce){
                     if(s.startsWith("距")){
                         introduction = s;
-                        line = StringUtils.mid(s, 2, s.indexOf("线")+2);
-                        station = StringUtils.mid(s, s.indexOf("线")+1, s.indexOf("站")+2);
+                        line = StringUtils.mid(s, 2, s.indexOf("线")-1);
+                        station = StringUtils.mid(s, s.indexOf("线")+1, findFirstNumber(s)+2);
 
                     }
                     if(s.startsWith("满")){
@@ -135,16 +141,23 @@ public class LianjiaProcessor implements Processor {
         String[] priceInfo = StringUtils.split(price.get(0).text(), " ");
         String signDate = priceInfo[0];
         String priceSqr = priceInfo [2];
-        String totalPrice = priceInfo [5];
+        String totalPrice = priceInfo [4];
         StringBuilder sb = new StringBuilder();
         sb.append(number).append("%").append(name).append("%").append(priceSqr).append("%")
                 .append(totalPrice).append("%").append(type).append("%").append(floor).append("%")
                 .append(disctict).append("%").append(area).append("%").append(signDate).append("%")
-                .append(sqr).append("%").append(state).append("%").append(station).append("%")
+                .append(sqr).append("%").append(state).append("%").append(line).append("%").append(station).append("%")
                 .append(orientation).append("%").append(decoration).append("%").append(introduction)
                 .append("%").append(link);
         logger.info(sb.toString());
         return sb.toString();
+    }
+
+    private int findFirstNumber (String s){
+        Pattern pattern = Pattern.compile("^\\D*(\\d)");
+        Matcher matcher = pattern.matcher(s);
+        matcher.find();
+        return matcher.start(1);
     }
 
 }

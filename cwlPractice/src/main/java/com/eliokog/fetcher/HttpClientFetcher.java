@@ -65,8 +65,6 @@ public class HttpClientFetcher {
         }finally {
             if(request!=null){
                 //ugle code due to the declare of the RequestBuilder.build(). must do this to release the connection
-                logger.debug("Finished http request : {}, the httpclient connection pool status{}",
-                        url.getURL(),  connectionManager.getTotalStats() );
                 HttpRequestBase req = (HttpRequestBase)request;
                 req.releaseConnection();
             }
