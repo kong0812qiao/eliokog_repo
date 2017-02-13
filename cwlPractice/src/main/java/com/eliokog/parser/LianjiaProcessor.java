@@ -19,25 +19,21 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.sun.org.apache.xerces.internal.impl.xpath.regex.CaseInsensitiveMap.get;
-import static com.sun.org.apache.xml.internal.serialize.LineSeparator.Web;
-import static java.awt.SystemColor.info;
-import static javax.management.Query.attr;
-import static org.apache.commons.lang3.StringUtils.mid;
 
 /**
  * Created by eliokog on 2017/2/8.
+ * processor to crawler Lianjia
  */
 public class LianjiaProcessor implements Processor {
 
-    Logger logger = LoggerFactory.getLogger(LianjiaProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(LianjiaProcessor.class);
 
     @Override
     public FetcherResult process(FetcherResult result) {
         Document doc = Jsoup.parse(result.getContent());
         Elements liSet = doc.select("div.info-panel");
 
-        LinkedHashSet<WebURL> parsedLinkSet = new LinkedHashSet<>();
+        LinkedHashSet<WebURL> parsedLinkSet = new LinkedHashSet<WebURL>();
         LinkedHashMap<String, String> parsedValMap = new LinkedHashMap<>();
         //TODO add duplicate removal logic here
         //TODO change the resultset handling
@@ -132,7 +128,7 @@ public class LianjiaProcessor implements Processor {
                         state =s;
                     }
 
-                };
+                }
             }
         }
 
@@ -149,7 +145,7 @@ public class LianjiaProcessor implements Processor {
                 .append(sqr).append("%").append(state).append("%").append(line).append("%").append(station).append("%")
                 .append(orientation).append("%").append(decoration).append("%").append(introduction)
                 .append("%").append(link);
-        logger.info(sb.toString());
+        logger.debug(sb.toString());
         return sb.toString();
     }
 

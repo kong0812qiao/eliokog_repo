@@ -31,7 +31,9 @@ public class CrawStarter {
         // so we can barely see any data in persist queue.
         PersiterQueue persiterQueue = new PersiterQueue();
         PersistWorker.build().withQueue(persiterQueue).withPersister(new ExcelPersister()).start();
+
 /*
+
         Crawler.build().withURL("https://www.zhihu.com/explore")
                 .withParser(new HTMLParser())
                 .withProcessor(new ZhihuProcessor())

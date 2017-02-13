@@ -73,7 +73,7 @@ public class Crawler {
           while (!Thread.interrupted() && !isTerminated) {
               try {
                   WebURL url = workQueue.deQueue();
-                  logger.debug("start to crawle link: {}", url.getURL());
+                  logger.info("start to crawle link: {}", url.getURL());
                   executor.submit(() -> {
                       FetcherResult res = httpClientFetcher.fetch(url);
                       parser.parse(res);

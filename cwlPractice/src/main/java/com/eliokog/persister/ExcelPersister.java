@@ -50,21 +50,16 @@ public class ExcelPersister implements Persister {
     @Override
     public void persist(String str){
 
-        logger.debug("writing String {} to excel", str);
         Row row = sheet.createRow(rowNum.getAndIncrement());
-        logger.debug("row number is", row.getRowNum());
         Arrays.stream(StringUtils.splitByWholeSeparator(str, "%")).reduce("0",(i, s)->{
             row.createCell(Integer.parseInt(i)).setCellValue(s);
-            logger.info("cell value =========, {} ", row.getCell(Integer.parseInt(i)).getStringCellValue());
             return String.valueOf(Integer.parseInt(i)+1);
         });
         try {
-            logger.debug("writing");
             out = new FileOutputStream(new File(System.getProperty("com.eliokog.craeleExcel")));
             workbook.write(out);
             out.flush();
             out.close();
-            logger.info("flushed");
         } catch (Exception e){
             e.printStackTrace();
         }

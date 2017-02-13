@@ -36,7 +36,7 @@ public class HttpConnectionPoolMgr {
         //TODO make the pool size configurable
         connectionManager = new PoolingHttpClientConnectionManager(reg);
         connectionManager.setDefaultMaxPerRoute(SystemPropertyUtil.getIntProperty("com.eliokog.connectionPool"));
-        connectionManager.setMaxTotal(300);
+        connectionManager.setMaxTotal(30);
 //        CloseableHttpClient httpClient = HttpClients.custom()
 //                .setConnectionManager(cm)
 //                .build();
