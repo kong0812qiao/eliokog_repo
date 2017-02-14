@@ -14,7 +14,7 @@ public class WorkQueue {
 
 
 
-    private BlockingQueue<WebURL> queue;
+    private volatile BlockingQueue<WebURL> queue;
 
     public WorkQueue(){
         queue =  new ArrayBlockingQueue<WebURL>(SystemPropertyUtil.getIntProperty("com.eliokog.workQueueSize"));

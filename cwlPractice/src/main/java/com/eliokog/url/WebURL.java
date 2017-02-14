@@ -1,15 +1,24 @@
 package com.eliokog.url;
 
+import com.eliokog.policy.RetryPolicy;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
  * WebURL entity used for Fetcher
  * normal URL looks like: <scheme>://<net_loc>/<path>;<params>?<query>#<fragment>
- *
  */
 public class WebURL {
+    public RetryPolicy getPolicy() {
+        return policy;
+    }
 
+    public void setPolicy(RetryPolicy policy) {
+        this.policy = policy;
+    }
+
+    private RetryPolicy policy;
 
     public java.net.URL getNetURL() {
         return netURL;
@@ -20,11 +29,12 @@ public class WebURL {
     }
 
     private URL netURL;
-    public WebURL(){
+
+    public WebURL() {
 
     }
 
-    public WebURL(String url){
+    public WebURL(String url) {
         this.URL = url;
         try {
             this.netURL = new URL(url);

@@ -2,12 +2,15 @@ package com.eliokog.frontier;
 
 import com.eliokog.persister.Persister;
 import org.apache.poi.ss.formula.functions.T;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by eliokog on 2017/2/7.
  */
 public class PersistWorker {
 
+    private static final Logger logger = LoggerFactory.getLogger(PersistWorker.class);
     private PersiterQueue queue;
 
     private Persister persister;
@@ -34,13 +37,14 @@ public class PersistWorker {
                 () -> {
                     while (true) {
                         try {
-                            persister.persist(queue.deQueue());
-
+                            String s = queue.deQueue();
+                            logger.info("start persist String: {}", s);
+                            persister.persist(s);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-                }
+                }, "PersistWorker"
         ).start();
 
     }

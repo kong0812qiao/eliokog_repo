@@ -5,9 +5,9 @@ package com.eliokog.policy;
  */
 public interface RetryPolicy {
 
-    public boolean allowRetry(int count, long startTimeOfExecution);
+    public boolean allowRetry();
 
-    public int getSleepBeforeRetry();
+    public long getSleepBeforeRetry();
 
     public boolean needRetry(String s);
 

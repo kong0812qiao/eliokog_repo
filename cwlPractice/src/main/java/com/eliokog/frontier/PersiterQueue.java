@@ -18,18 +18,18 @@ public class PersiterQueue{
 
     private static final Logger logger = LoggerFactory.getLogger(PersiterQueue.class);
 
-    private BlockingQueue<String> queue;
+    private volatile BlockingQueue<String> queue;
 
     public PersiterQueue(){
         queue =  new ArrayBlockingQueue<String>(SystemPropertyUtil.getIntProperty("com.eliokog.persistQueueSize"));
     }
 
        public void enQueue(String  value) throws InterruptedException {
-           logger.info("Enqueue value {} ", value);
         queue.offer(value, 10000, TimeUnit.MICROSECONDS);
     }
 
     public String deQueue() throws InterruptedException {
+
         return queue.take();
     }
 

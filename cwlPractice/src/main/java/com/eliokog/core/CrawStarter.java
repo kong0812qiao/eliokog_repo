@@ -7,6 +7,7 @@ import com.eliokog.parser.ZhihuProcessor;
 import com.eliokog.persister.CSVPersister;
 import com.eliokog.persister.ExcelPersister;
 import com.eliokog.persister.FilerPersister;
+import com.eliokog.policy.DefaultRetryNPolicy;
 import com.eliokog.url.WebURL;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class CrawStarter {
         cs.init();
 
         PersiterQueue persiterQueue = new PersiterQueue();
-        PersistWorker.build().withQueue(persiterQueue).withPersister(new ExcelPersister()).start();
+        PersistWorker.build().withQueue(persiterQueue).withPersister(new CSVPersister()).start();
 
         WorkQueue workQueue = new WorkQueue();
 
@@ -44,10 +45,11 @@ public class CrawStarter {
 
 
         for(int i=1; i<2200; i++){
-            workQueue.enQueue(new WebURL("http://sh.lianjia.com/chengjiao/d"+ i));
+            WebURL url =new WebURL("http://sh.lianjia.com/chengjiao/d"+ i);
+            url.setPolicy(new DefaultRetryNPolicy());
+            workQueue.enQueue(url);
         }
-       Crawler.build().withURL("http://sh.lianjia.com/chengjiao/d1")
-                .withParser(new HTMLParser())
+       Crawler.build().withParser(new HTMLParser())
                 .withProcessor(new LianjiaProcessor())
                 .withPersistQueue(persiterQueue).withWorkQueue(workQueue).start();
 

@@ -78,8 +78,7 @@ public class Crawler {
                     logger.debug("start to crawle link: {}", url.getURL());
                     executor.submit(() -> {
                         FetcherResult res = httpClientFetcher.fetch(url);
-//                        parser.parse(res);
-//                        enQueue(res);
+                        parser.parse(res);
                     });
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -87,7 +86,7 @@ public class Crawler {
                 }
             }
 
-        }).start();
+        }, "Crawler").start();
     }
 
     public void enQueue(FetcherResult result) {

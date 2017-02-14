@@ -24,7 +24,7 @@ public class ExcelPersister implements Persister {
     private AtomicInteger rowNum = new AtomicInteger(0);
     private FileOutputStream out;
 
-    private int count =0;
+    private int count = 1;
     public ExcelPersister() throws IOException {
 
         //Blank workbook
@@ -54,11 +54,12 @@ public class ExcelPersister implements Persister {
                 row.createCell(Integer.parseInt(i)).setCellValue(s);
                 return String.valueOf(Integer.parseInt(i) + 1);
             });
-            if(count==19) {
+            if(count==20) {
                 out = new FileOutputStream(new File(System.getProperty("com.eliokog.craeleExcel")));
                 workbook.write(out);
                 out.flush();
                 out.close();
+                count=0;
             }
             count++;
         } catch (IOException  e) {

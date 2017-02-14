@@ -33,7 +33,6 @@ public class HttpClientFetcher {
     private Crawler crawler;
 
     public HttpClientFetcher() {
-//        httpClient = HttpClientBuilder.create().build();
 
     }
 
@@ -44,7 +43,7 @@ public class HttpClientFetcher {
     public FetcherResult fetch(WebURL url) {
         FetcherResult result = new FetcherResult();
         result.setUrl(url);
-        //initialize the httpClient
+
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
         httpClientBuilder.setConnectionManager(connectionManager);
         httpClient = httpClientBuilder.build();
@@ -63,30 +62,34 @@ public class HttpClientFetcher {
             request = requestBuilder.build();
             logger.debug("sending http request: {}", url.getURL());
             HttpResponse response = httpClient.execute(request);
-            result.setStatusCode(response.getStatusLine().getStatusCode());
-            if (response.getStatusLine().getStatusCode() < 300 && response.getStatusLine().getStatusCode() > 199) {
+            int statuscode = response.getStatusLine().getStatusCode();
+            result.setStatusCode(statuscode);
+            if (statuscode < 300 && statuscode > 199) {
                 String content = IOUtils.toString(response.getEntity().getContent());
-                if (content.contains("重试")) {
-                    logger.error("blocked by hosts webside, start restrying.. link: {}", url.getURL());
-                    if (request != null) {
-                        //ugle code due to the declare of the RequestBuilder.build(). must do this to release the connection
-                        Thread.currentThread().sleep(10000);
-                        HttpRequestBase req = (HttpRequestBase) request;
-                        req.releaseConnection();
+                if (url.getPolicy().needRetry(content)) {
+                    logger.error("blocked by hosts website, start retrying.. link: {}", url.getURL());
+                    if (url.getPolicy().allowRetry()) {
+                        Thread.currentThread().sleep(url.getPolicy().getSleepBeforeRetry());
+                        CrawlerContext.context().getWorkEnQService().enQueue(url);
                     }
-                    this.retryFetch(url);
                 }
+                logger.debug("The content is: {},", content);
                 result.setContent(content);
                 Thread.currentThread().sleep(1000);
-                logger.debug("   result.setContent(content); : {}", content);
+            } else {
+                logger.error("Request failed with status code: {}", statuscode);
+                if (url.getPolicy().allowRetry()) {
+                    Thread.currentThread().sleep(url.getPolicy().getSleepBeforeRetry());
+                    CrawlerContext.context().getWorkEnQService().enQueue(url);
+                }
             }
         } catch (IOException e) {
             logger.error("IO exception here {}", e.getMessage());
             e.printStackTrace();
-            logger.info("Retring with URL: {}", url);
-            CrawlerContext.context().getWorkEnQService().enQueue(url);
+            logger.info("Retrying with URL: {}", url);
             try {
-                Thread.currentThread().sleep(1000);
+                Thread.currentThread().sleep(10000);
+                CrawlerContext.context().getWorkEnQService().enQueue(url);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }
@@ -101,16 +104,6 @@ public class HttpClientFetcher {
         return result;
     }
 
-    private void retryFetch(WebURL url) {
-        try {
-            Thread.currentThread().sleep(60 * 1000);
-            FetcherResult result = this.fetch(url);
-            this.crawler.enQueue(result);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private RequestBuilder requestBuilder(WebURL url) {
         if (url.getMethod() == null || url.getMethod().equalsIgnoreCase(String.valueOf(CONSTANTs.METHOD.GET))) {
