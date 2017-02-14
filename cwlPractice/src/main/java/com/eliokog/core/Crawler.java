@@ -72,15 +72,14 @@ public class Crawler {
                 parser.parse(result);
                 enQueue(result);
             }
-
             while (!Thread.interrupted() && !isTerminated) {
                 try {
                     WebURL url = workQueue.deQueue();
-                    logger.info("start to crawle link: {}", url.getURL());
+                    logger.debug("start to crawle link: {}", url.getURL());
                     executor.submit(() -> {
                         FetcherResult res = httpClientFetcher.fetch(url);
-                        parser.parse(res);
-                        enQueue(res);
+//                        parser.parse(res);
+//                        enQueue(res);
                     });
                 } catch (InterruptedException e) {
                     e.printStackTrace();

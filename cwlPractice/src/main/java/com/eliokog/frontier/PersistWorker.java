@@ -1,6 +1,7 @@
 package com.eliokog.frontier;
 
 import com.eliokog.persister.Persister;
+import org.apache.poi.ss.formula.functions.T;
 
 /**
  * Created by eliokog on 2017/2/7.
@@ -19,11 +20,11 @@ public class PersistWorker {
     private PersistWorker() {
     }
 
-    public static PersistWorker build() {
+    public static <T>PersistWorker build() {
         return new PersistWorker();
     }
 
-    public PersistWorker withQueue(PersiterQueue queue) {
+    public <T>PersistWorker withQueue(PersiterQueue queue) {
         this.queue = queue;
         return this;
     }

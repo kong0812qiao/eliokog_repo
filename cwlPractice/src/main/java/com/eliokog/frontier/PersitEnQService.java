@@ -4,31 +4,28 @@ import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
-
 /**
  * Created by eliokog on 2017/2/9.
  */
-public class PersitEnQService {
+public class PersitEnQService<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(PersitEnQService.class);
-    private PersiterQueue<T> queue;
-    public PersitEnQService(){
-        queue = new PersiterQueue<T>();
+    private PersiterQueue queue;
+
+    public PersitEnQService() {
+        queue = new PersiterQueue();
     }
-    public static PersitEnQService build(){
+
+    public static PersitEnQService build() {
         return new PersitEnQService();
     }
 
-    public PersitEnQService withPersistQueue(PersiterQueue<T> queue){
+    public PersitEnQService withPersistQueue(PersiterQueue queue) {
         this.queue = queue;
         return this;
     }
 
-    public void enQueue(T t){
+    public void enQueue(String t) {
         try {
             queue.enQueue(t);
         } catch (InterruptedException e) {

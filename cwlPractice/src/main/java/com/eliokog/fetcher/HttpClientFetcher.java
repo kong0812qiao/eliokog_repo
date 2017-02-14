@@ -2,6 +2,7 @@ package com.eliokog.fetcher;
 
 
 import com.eliokog.core.Crawler;
+import com.eliokog.core.CrawlerContext;
 import com.eliokog.url.WebURL;
 import com.eliokog.util.CONSTANTs;
 import org.apache.commons.io.IOUtils;
@@ -60,7 +61,7 @@ public class HttpClientFetcher {
         HttpUriRequest request = null;
         try {
             request = requestBuilder.build();
-            logger.info("sending http request: {}", url.getURL());
+            logger.debug("sending http request: {}", url.getURL());
             HttpResponse response = httpClient.execute(request);
             result.setStatusCode(response.getStatusLine().getStatusCode());
             if (response.getStatusLine().getStatusCode() < 300 && response.getStatusLine().getStatusCode() > 199) {
@@ -69,6 +70,7 @@ public class HttpClientFetcher {
                     logger.error("blocked by hosts webside, start restrying.. link: {}", url.getURL());
                     if (request != null) {
                         //ugle code due to the declare of the RequestBuilder.build(). must do this to release the connection
+                        Thread.currentThread().sleep(10000);
                         HttpRequestBase req = (HttpRequestBase) request;
                         req.releaseConnection();
                     }
@@ -82,7 +84,12 @@ public class HttpClientFetcher {
             logger.error("IO exception here {}", e.getMessage());
             e.printStackTrace();
             logger.info("Retring with URL: {}", url);
-            this.retryFetch(url);
+            CrawlerContext.context().getWorkEnQService().enQueue(url);
+            try {
+                Thread.currentThread().sleep(1000);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {

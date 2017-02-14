@@ -9,6 +9,6 @@ public interface RetryPolicy {
 
     public int getSleepBeforeRetry();
 
-    public boolean needRetry();
+    public boolean needRetry(String s);
 
 }

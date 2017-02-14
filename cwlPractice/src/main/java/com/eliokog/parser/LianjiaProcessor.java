@@ -1,5 +1,6 @@
 package com.eliokog.parser;
 
+import com.eliokog.core.CrawlerContext;
 import com.eliokog.fetcher.FetcherResult;
 import com.eliokog.url.WebURL;
 import com.eliokog.util.URLUtils;
@@ -69,7 +70,9 @@ public class LianjiaProcessor implements Processor {
             result.setParsedList(new LinkedList<WebURL>(parsedLinkSet));
             logger.debug("Data: {}", info);
             parsedValMap.put(String.valueOf(i), info);
+            CrawlerContext.context().getPersitEnQService().enQueue(info);
             i++;
+
         }
         logger.debug("parsedValMap size: {}, parsedValMap: {}" ,parsedValMap.size(), parsedValMap);
 

@@ -48,13 +48,13 @@ public class ExcelPersister implements Persister {
     public void persist(String str) {
 //  TODO refactor not to read the whole file everytime write
         try {
-            // notice how the Workbook must be constructed from the existing file
+            logger.info("Persisting String {} ", str);
             Row row = sheet.createRow(rowNum.getAndIncrement());
             Arrays.stream(StringUtils.splitByWholeSeparator(str, "%")).reduce("0", (i, s) -> {
                 row.createCell(Integer.parseInt(i)).setCellValue(s);
                 return String.valueOf(Integer.parseInt(i) + 1);
             });
-            if(count==100) {
+            if(count==19) {
                 out = new FileOutputStream(new File(System.getProperty("com.eliokog.craeleExcel")));
                 workbook.write(out);
                 out.flush();

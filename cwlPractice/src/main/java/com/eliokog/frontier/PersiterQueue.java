@@ -2,6 +2,8 @@ package com.eliokog.frontier;
 
 import com.eliokog.url.WebURL;
 import com.eliokog.util.SystemPropertyUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -12,18 +14,22 @@ import static com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT.value;
 /**
  * Created by eliokog on 2017/2/7.
  */
-public class PersiterQueue<T>{
-    private BlockingQueue<T> queue;
+public class PersiterQueue{
+
+    private static final Logger logger = LoggerFactory.getLogger(PersiterQueue.class);
+
+    private BlockingQueue<String> queue;
 
     public PersiterQueue(){
-        queue =  new ArrayBlockingQueue<T>(SystemPropertyUtil.getIntProperty("com.eliokog.persistQueueSize"));
+        queue =  new ArrayBlockingQueue<String>(SystemPropertyUtil.getIntProperty("com.eliokog.persistQueueSize"));
     }
 
-       public void enQueue(T  value) throws InterruptedException {
+       public void enQueue(String  value) throws InterruptedException {
+           logger.info("Enqueue value {} ", value);
         queue.offer(value, 10000, TimeUnit.MICROSECONDS);
     }
 
-    public T deQueue() throws InterruptedException {
+    public String deQueue() throws InterruptedException {
         return queue.take();
     }
 
@@ -31,11 +37,11 @@ public class PersiterQueue<T>{
         return queue.size();
     }
 
-    public BlockingQueue<T> getQueue() {
+    public BlockingQueue<String> getQueue() {
         return queue;
     }
 
-    public void setQueue(BlockingQueue<T> queue) {
+    public void setQueue(BlockingQueue<String> queue) {
         this.queue = queue;
     }
 }
