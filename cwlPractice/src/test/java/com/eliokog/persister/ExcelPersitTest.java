@@ -3,10 +3,12 @@ package com.eliokog.persister;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,7 +19,12 @@ import java.util.stream.Stream;
 public class ExcelPersitTest {
     private XSSFSheet sheet;
     private AtomicInteger rowNum = new AtomicInteger(0);
-    @Test
+
+    @Before
+    public void before(){
+        System.setProperty("com.eliokog.craeleExcel", "C:\\eliokog\\123\\crawler.csv");
+    }
+//    @Test
     public void testExcel()throws Exception{
 
         //Blank workbook
@@ -41,4 +48,17 @@ public class ExcelPersitTest {
         //Write the workbook in file system
 
     }
+//    @Test
+    public void testAppend() throws IOException {
+     Persister persister = new ExcelPersister();
+        for(int i=0; i<10000; i++)
+     persister.persist("123123123123123123124 % 12331231231232131245 % 13123123123123123123123123123123122324");
+    }
+    @Test
+    public void testCSV() throws IOException {
+        Persister persister = new CSVPersister();
+        persister.persist("sh4150186%广裕小区%44800元/平%420万%2室2厅% 中区/24层 %虹口%凉城%2016-08-14%93.75平米%满五%N/A%N/A% 朝东南 %精装%N/A%http://sh.lianjia.com/chengjiao/sh4150186.html");
+        persister.persist("123%123%");
+    }
+
 }

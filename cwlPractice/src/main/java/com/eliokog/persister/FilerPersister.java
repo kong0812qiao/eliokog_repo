@@ -27,7 +27,7 @@ public class FilerPersister implements Persister {
     }
 
     @Override
-    public void destory(){
+    public void destroy(){
         printWriter.close();
     }
 

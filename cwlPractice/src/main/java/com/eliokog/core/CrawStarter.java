@@ -5,6 +5,7 @@ import com.eliokog.frontier.WorkQueue;
 import com.eliokog.parser.HTMLParser;
 import com.eliokog.parser.LianjiaProcessor;
 import com.eliokog.parser.ZhihuProcessor;
+import com.eliokog.persister.CSVPersister;
 import com.eliokog.persister.ExcelPersister;
 import com.eliokog.persister.FilerPersister;
 import com.eliokog.frontier.PersistWorker;
@@ -22,7 +23,7 @@ import static org.apache.xmlbeans.impl.schema.StscState.start;
  * Created by eliokog on 2017/1/12.
  */
 public class CrawStarter {
-    final static Logger logger = LoggerFactory.getLogger(CrawStarter.class);
+    private final static Logger logger = LoggerFactory.getLogger(CrawStarter.class);
 
     public static void main(String[] args) throws InterruptedException, IOException, InvalidFormatException {
         CrawStarter cs = new CrawStarter();

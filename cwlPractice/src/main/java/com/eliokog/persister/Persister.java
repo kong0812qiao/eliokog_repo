@@ -6,5 +6,5 @@ package com.eliokog.persister;
 public interface Persister {
 
     void persist(String s);
-    void destory();
+    void destroy();
 }

@@ -12,18 +12,18 @@ import static com.sun.corba.se.spi.activation.IIOP_CLEAR_TEXT.value;
 /**
  * Created by eliokog on 2017/2/7.
  */
-public class PersiterQueue{
-    private BlockingQueue<String> queue;
+public class PersiterQueue<T>{
+    private BlockingQueue<T> queue;
 
     public PersiterQueue(){
-        queue =  new ArrayBlockingQueue<String>(SystemPropertyUtil.getIntProperty("com.eliokog.persistQueueSize"));
+        queue =  new ArrayBlockingQueue<T>(SystemPropertyUtil.getIntProperty("com.eliokog.persistQueueSize"));
     }
 
-       public void enQueue(String  value) throws InterruptedException {
+       public void enQueue(T  value) throws InterruptedException {
         queue.offer(value, 10000, TimeUnit.MICROSECONDS);
     }
 
-    public String deQueue() throws InterruptedException {
+    public T deQueue() throws InterruptedException {
         return queue.take();
     }
 
@@ -31,11 +31,11 @@ public class PersiterQueue{
         return queue.size();
     }
 
-    public BlockingQueue<String> getQueue() {
+    public BlockingQueue<T> getQueue() {
         return queue;
     }
 
-    public void setQueue(BlockingQueue<String> queue) {
+    public void setQueue(BlockingQueue<T> queue) {
         this.queue = queue;
     }
 }

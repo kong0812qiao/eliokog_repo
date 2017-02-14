@@ -63,13 +63,15 @@ public class LianjiaProcessor implements Processor {
             logger.debug("Data: {}", sb);
             parsedValMap.put("<br>房源信息: </br>", sb.toString());
         }*/
-
+        int i = 1;
         for(Element e : liSet){
             String info = getExcelString(e, result.getUrl());
             result.setParsedList(new LinkedList<WebURL>(parsedLinkSet));
             logger.debug("Data: {}", info);
-            parsedValMap.put("<br>房源信息: </br>", info);
+            parsedValMap.put(String.valueOf(i), info);
+            i++;
         }
+        logger.debug("parsedValMap size: {}, parsedValMap: {}" ,parsedValMap.size(), parsedValMap);
 
         result.setFieldMap(parsedValMap);
         return result;

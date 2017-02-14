@@ -29,13 +29,14 @@ public class HttpClientFetcher {
 
     private HttpClient httpClient;
 
-    private Crawler crawler ;
+    private Crawler crawler;
 
     public HttpClientFetcher() {
 //        httpClient = HttpClientBuilder.create().build();
 
     }
-    public HttpClientFetcher(Crawler crawler){
+
+    public HttpClientFetcher(Crawler crawler) {
         this.crawler = crawler;
     }
 
@@ -46,6 +47,7 @@ public class HttpClientFetcher {
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
         httpClientBuilder.setConnectionManager(connectionManager);
         httpClient = httpClientBuilder.build();
+
         //load the http request
         RequestBuilder requestBuilder = requestBuilder(url);
         url.setTimeout(10000);
@@ -54,53 +56,47 @@ public class HttpClientFetcher {
                 .setSocketTimeout(url.getTimeout())
                 .setConnectTimeout(url.getTimeout());
         requestBuilder.setConfig(requestConfigBuilder.build()).setUri(url.getURL()).build();
+
         HttpUriRequest request = null;
         try {
             request = requestBuilder.build();
-            logger.info("sending http request: {}", url.getURL() );
+            logger.info("sending http request: {}", url.getURL());
             HttpResponse response = httpClient.execute(request);
             result.setStatusCode(response.getStatusLine().getStatusCode());
-            if (response.getStatusLine().getStatusCode() < 300 && response.getStatusLine().getStatusCode() > 199){
+            if (response.getStatusLine().getStatusCode() < 300 && response.getStatusLine().getStatusCode() > 199) {
                 String content = IOUtils.toString(response.getEntity().getContent());
-                if(content.contains("重试")){
+                if (content.contains("重试")) {
                     logger.error("blocked by hosts webside, start restrying.. link: {}", url.getURL());
-                    if(request!=null){
+                    if (request != null) {
                         //ugle code due to the declare of the RequestBuilder.build(). must do this to release the connection
-                        HttpRequestBase req = (HttpRequestBase)request;
+                        HttpRequestBase req = (HttpRequestBase) request;
                         req.releaseConnection();
                     }
                     this.retryFetch(url);
                 }
                 result.setContent(content);
-                Thread.currentThread().sleep(10*1000);
-                logger.debug("   result.setContent(content); : {}", content );
+                Thread.currentThread().sleep(1000);
+                logger.debug("   result.setContent(content); : {}", content);
             }
-//            Thread.currentThread().sleep(1000);
         } catch (IOException e) {
-            //TODO add retry here.
             logger.error("IO exception here {}", e.getMessage());
             e.printStackTrace();
-            try {
-                httpClient.execute(request);
-            } catch (IOException e1) {
-                logger.error("retry IO exception here {}", e.getMessage());
-                e.printStackTrace();
-            }
+            logger.info("Retring with URL: {}", url);
+            this.retryFetch(url);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            if(request!=null){
-                //ugle code due to the declare of the RequestBuilder.build(). must do this to release the connection
-                HttpRequestBase req = (HttpRequestBase)request;
+            if (request != null) {
+                HttpRequestBase req = (HttpRequestBase) request;
                 req.releaseConnection();
             }
         }
         return result;
     }
 
-    private void retryFetch(WebURL url){
+    private void retryFetch(WebURL url) {
         try {
-            Thread.currentThread().sleep(60*1000);
+            Thread.currentThread().sleep(60 * 1000);
             FetcherResult result = this.fetch(url);
             this.crawler.enQueue(result);
         } catch (InterruptedException e) {

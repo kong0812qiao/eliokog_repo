@@ -33,13 +33,9 @@ public class HttpConnectionPoolMgr {
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
                 .register("https", sslsf)
                 .build();
-        //TODO make the pool size configurable
         connectionManager = new PoolingHttpClientConnectionManager(reg);
         connectionManager.setDefaultMaxPerRoute(SystemPropertyUtil.getIntProperty("com.eliokog.connectionPool"));
-        connectionManager.setMaxTotal(30);
-//        CloseableHttpClient httpClient = HttpClients.custom()
-//                .setConnectionManager(cm)
-//                .build();
+        connectionManager.setMaxTotal(300);
     }
 
     public static HttpConnectionPoolMgr getConnectionManager(){
