@@ -32,6 +32,10 @@ public class PersitEnQService<T> {
             logger.error("Interrupeted when trying enqueue {}", t.toString());
             e.printStackTrace();
         }
+    }
 
+    public int queueSize(){
+
+        return queue.size();
     }
 }

@@ -1,5 +1,7 @@
 package com.eliokog.persister;
 
+import com.eliokog.parser.LianjiaProcessor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -54,11 +56,23 @@ public class ExcelPersitTest {
         for(int i=0; i<10000; i++)
      persister.persist("123123123123123123124 % 12331231231232131245 % 13123123123123123123123123123123122324");
     }
-    @Test
+//    @Test
     public void testCSV() throws IOException {
         Persister persister = new CSVPersister();
         persister.persist("sh4150186%广裕小区%44800元/平%420万%2室2厅% 中区/24层 %虹口%凉城%2016-08-14%93.75平米%满五%N/A%N/A% 朝东南 %精装%N/A%http://sh.lianjia.com/chengjiao/sh4150186.html");
         persister.persist("123%123%");
+    }
+    @Test
+    public void testGetStation(){
+        LianjiaProcessor processor = new LianjiaProcessor();
+        String s = "距离12号线试试广兰路站21312471米";
+        int i = processor.findFirstNumber(s);
+        System.out.println(s);
+        System.out.println(s.indexOf("线"));
+        String station = StringUtils.mid(s, s.indexOf("线")+1, i-1);
+        System.out.println(i);
+
+        System.out.println(station);
     }
 
 }

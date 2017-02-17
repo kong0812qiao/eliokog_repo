@@ -18,9 +18,19 @@ public class CrawlerContext {
 
     private WorkEnQService workEnQService;
 
+    private Crawler crawler;
+
+    public Crawler getCrawler() {
+        return crawler;
+    }
+
     private CrawlerContext() {
     }
 
+    public CrawlerContext withCrawler(Crawler crawler){
+        this.crawler = crawler;
+        return this;
+    }
     public static CrawlerContext context(){
         return context;
     }

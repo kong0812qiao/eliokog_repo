@@ -34,6 +34,10 @@ public class WorkEnQService {
         return queue.deQueue();
     }
 
+    public int queueSize(){
+        return queue.size();
+    }
+
 
     public static WorkEnQService build(){
         return new WorkEnQService();

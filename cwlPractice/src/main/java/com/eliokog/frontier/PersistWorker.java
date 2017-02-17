@@ -38,7 +38,7 @@ public class PersistWorker {
                     while (true) {
                         try {
                             String s = queue.deQueue();
-                            logger.info("start persist String: {}", s);
+                            logger.trace("start persist String: {}", s);
                             persister.persist(s);
                         } catch (InterruptedException e) {
                             e.printStackTrace();

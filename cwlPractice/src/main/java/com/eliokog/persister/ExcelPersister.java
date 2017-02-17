@@ -16,7 +16,9 @@ import java.util.stream.Stream;
 
 /**
  * Created by eliokog on 2017/2/9.
+ * the csv file it wrote to get garbage characteristics when the file size is large， use CSV Persister instread
  */
+@Deprecated
 public class ExcelPersister implements Persister {
     private final static Logger logger = LoggerFactory.getLogger(ExcelPersister.class);
     private XSSFWorkbook workbook;

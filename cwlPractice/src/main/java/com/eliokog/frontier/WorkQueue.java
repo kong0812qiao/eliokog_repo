@@ -35,4 +35,8 @@ public class WorkQueue {
     public void setQueue(BlockingQueue<WebURL> queue) {
         this.queue = queue;
     }
+
+    public int size(){
+        return queue.size();
+    }
 }

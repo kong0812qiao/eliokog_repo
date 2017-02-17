@@ -7,11 +7,16 @@ import com.eliokog.url.WebURL;
 import com.eliokog.util.CONSTANTs;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
@@ -28,7 +33,7 @@ import static com.eliokog.fetcher.HttpConnectionPoolMgr.connectionManager;
 public class HttpClientFetcher {
     private final static Logger logger = LoggerFactory.getLogger(HttpClientFetcher.class);
 
-    private HttpClient httpClient;
+    private CloseableHttpClient httpClient;
 
     private Crawler crawler;
 
@@ -44,7 +49,12 @@ public class HttpClientFetcher {
         FetcherResult result = new FetcherResult();
         result.setUrl(url);
 
-        HttpClientBuilder httpClientBuilder = HttpClients.custom();
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
+                new AuthScope("httpbin.org", 80),
+                new UsernamePasswordCredentials("13795209903", "7532501"));
+
+        HttpClientBuilder httpClientBuilder = HttpClients.custom().setDefaultCredentialsProvider(credsProvider);
         httpClientBuilder.setConnectionManager(connectionManager);
         httpClient = httpClientBuilder.build();
 
@@ -69,17 +79,17 @@ public class HttpClientFetcher {
                 if (url.getPolicy().needRetry(content)) {
                     logger.error("blocked by hosts website, start retrying.. link: {}", url.getURL());
                     if (url.getPolicy().allowRetry()) {
-                        Thread.currentThread().sleep(url.getPolicy().getSleepBeforeRetry());
+                        Thread.sleep(url.getPolicy().getSleepBeforeRetry());
                         CrawlerContext.context().getWorkEnQService().enQueue(url);
                     }
                 }
-                logger.debug("The content is: {},", content);
+                logger.trace("The content is: {},", content);
                 result.setContent(content);
-                Thread.currentThread().sleep(1000);
+                Thread.sleep(1000);
             } else {
                 logger.error("Request failed with status code: {}", statuscode);
                 if (url.getPolicy().allowRetry()) {
-                    Thread.currentThread().sleep(url.getPolicy().getSleepBeforeRetry());
+                    Thread.sleep(url.getPolicy().getSleepBeforeRetry());
                     CrawlerContext.context().getWorkEnQService().enQueue(url);
                 }
             }
@@ -88,7 +98,7 @@ public class HttpClientFetcher {
             e.printStackTrace();
             logger.info("Retrying with URL: {}", url);
             try {
-                Thread.currentThread().sleep(10000);
+                Thread.sleep(10000);
                 CrawlerContext.context().getWorkEnQService().enQueue(url);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();

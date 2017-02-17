@@ -37,8 +37,6 @@ public class LianjiaProcessor implements Processor {
         LinkedHashSet<WebURL> parsedLinkSet = new LinkedHashSet<WebURL>();
         LinkedHashMap<String, String> parsedValMap = new LinkedHashMap<>();
         //TODO add duplicate removal logic here
-        //TODO change the resultset handling
-        //TODO add url completion here
 
 /*        for(Element e : liSet){
             StringBuilder sb = new StringBuilder();
@@ -72,8 +70,8 @@ public class LianjiaProcessor implements Processor {
             parsedValMap.put(String.valueOf(i), info);
             CrawlerContext.context().getPersitEnQService().enQueue(info);
             i++;
-
         }
+
         logger.debug("parsedValMap size: {}, parsedValMap: {}" ,parsedValMap.size(), parsedValMap);
 
         result.setFieldMap(parsedValMap);
@@ -126,7 +124,7 @@ public class LianjiaProcessor implements Processor {
                     if(s.startsWith("距")){
                         introduction = s;
                         line = StringUtils.mid(s, 2, s.indexOf("线")-1);
-                        station = StringUtils.mid(s, s.indexOf("线")+1, findFirstNumber(s)+2);
+                        station = StringUtils.mid(s, s.indexOf("线")+1, findFirstNumber(s)-1);
 
                     }
                     if(s.startsWith("满")){
@@ -147,14 +145,15 @@ public class LianjiaProcessor implements Processor {
         sb.append(number).append("%").append(name).append("%").append(priceSqr).append("%")
                 .append(totalPrice).append("%").append(type).append("%").append(floor).append("%")
                 .append(disctict).append("%").append(area).append("%").append(signDate).append("%")
-                .append(sqr).append("%").append(state).append("%").append(line).append("%").append(station).append("%")
-                .append(orientation).append("%").append(decoration).append("%").append(introduction)
-                .append("%").append(link);
+                .append(sqr).append("%").append(state).append("%").append(line).append("%")
+                .append(station).append("%").append(orientation).append("%").append(decoration)
+                .append("%").append(introduction).append("%").append(link);
         logger.debug(sb.toString());
         return sb.toString();
     }
 
-    private int findFirstNumber (String s){
+    public int findFirstNumber (String s){
+        s = StringUtils.substring(s, s.indexOf("线"));
         Pattern pattern = Pattern.compile("^\\D*(\\d)");
         Matcher matcher = pattern.matcher(s);
         matcher.find();

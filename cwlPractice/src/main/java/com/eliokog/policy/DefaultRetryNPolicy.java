@@ -40,7 +40,9 @@ public class DefaultRetryNPolicy implements RetryPolicy {
         if(StringUtils.contains(s, "抱歉")){
             return true;
         }
-
+        if(StringUtils.contains(s, "重试")){
+            return true;
+        }
         return false;
     }
 }

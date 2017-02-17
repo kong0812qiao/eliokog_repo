@@ -1,5 +1,6 @@
 package com.eliokog.core;
 
+import com.eliokog.executors.CrawleThreadFactory;
 import com.eliokog.fetcher.FetcherResult;
 import com.eliokog.fetcher.HttpClientFetcher;
 import com.eliokog.frontier.PersiterQueue;
@@ -11,13 +12,13 @@ import com.eliokog.util.SystemPropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by eliokog on 2017/2/7.
+ * Crawler
  */
 public class Crawler {
     private static final Logger logger = LoggerFactory.getLogger(Crawler.class);
@@ -31,11 +32,14 @@ public class Crawler {
 
     private Parser parser;
 
-    ExecutorService executor;
+    private ThreadPoolExecutor executor;
 
     private Crawler() {
         workQueue = new WorkQueue();
-        executor = new ThreadPoolExecutor(SystemPropertyUtil.getIntProperty("com.eliokog.crawlerThreads"), SystemPropertyUtil.getIntProperty("com.eliokog.crawlerThreads") * 2, 10000, TimeUnit.MICROSECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor = new ThreadPoolExecutor(SystemPropertyUtil.getIntProperty("com.eliokog.crawlerThreads"), SystemPropertyUtil.getIntProperty("com.eliokog.crawlerThreads") * 2, 10000, TimeUnit.MICROSECONDS, new LinkedBlockingQueue<>(),new CrawleThreadFactory("CrawleTask"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+
+        executor.allowCoreThreadTimeOut(true);
     }
 
     public Crawler withURL(String url) {
@@ -64,13 +68,16 @@ public class Crawler {
         return this;
     }
 
-    public void start() {
+    public boolean  isIdle(){
+        return this.executor.getActiveCount()==0 && this.executor.getTaskCount()==0;
+    }
+
+    public Crawler start() {
         new Thread(() -> {
             HttpClientFetcher httpClientFetcher = new HttpClientFetcher();
             if (null != url) {
                 FetcherResult result = httpClientFetcher.fetch(url);
                 parser.parse(result);
-                enQueue(result);
             }
             while (!Thread.interrupted() && !isTerminated) {
                 try {
@@ -87,6 +94,7 @@ public class Crawler {
             }
 
         }, "Crawler").start();
+        return this;
     }
 
     public void enQueue(FetcherResult result) {
@@ -97,7 +105,6 @@ public class Crawler {
                 e.printStackTrace();
             }
         });
-        //refactor the enqueue logic
 
         result.getFieldMap().forEach((k, v) ->
         {
