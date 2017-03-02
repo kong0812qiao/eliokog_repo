@@ -26,7 +26,7 @@ public class CSVPersister implements Persister {
         // fix the encoding issue
         byte[] bom = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
 
-        String head = Stream.of("\"编号", "小区", "单价", "挂牌总价", "户型", "楼层", "区县", "版块", "成交日期", "面积", "条件", "交通", "地铁站", "朝向", "装修", "描述", "链接\"\r").collect(Collectors.joining("\",\""));
+        String head = Stream.of("\"编号", "小区", "单价", "挂牌总价", "户型", "楼层", "区县", "版块", "成交日期", "面积", "条件", "交通", "地铁站", "朝向", "装修", "描述", "链接", "CrawledFrom\"\r").collect(Collectors.joining("\",\""));
         writer.write(bom);
         writer.write((new String(head.getBytes(), "utf-8")).getBytes());
         writer.flush();
@@ -40,6 +40,8 @@ public class CSVPersister implements Persister {
         logger.debug("String to persist: {}", sb.toString());
         try {
             writer.write(sb.toString().getBytes());
+
+
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,4 +56,5 @@ public class CSVPersister implements Persister {
             e.printStackTrace();
         }
     }
+
 }

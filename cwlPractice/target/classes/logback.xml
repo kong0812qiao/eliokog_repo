@@ -33,14 +33,14 @@
 
     </appender>
 
-    <logger name="com.eliokog" level="debug"
+    <logger name="com.eliokog" level="error"
             additivity="false">
         <appender-ref ref="FILE-AUDIT" />
         <appender-ref ref="STDOUT" />
 
     </logger>
 
-    <root level="info">
+    <root level="error">
         <appender-ref ref="FILE-AUDIT" />
         <appender-ref ref="STDOUT" />
 

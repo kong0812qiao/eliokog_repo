@@ -147,7 +147,7 @@ public class LianjiaProcessor implements Processor {
                 .append(disctict).append("%").append(area).append("%").append(signDate).append("%")
                 .append(sqr).append("%").append(state).append("%").append(line).append("%")
                 .append(station).append("%").append(orientation).append("%").append(decoration)
-                .append("%").append(introduction).append("%").append(link);
+                .append("%").append(introduction).append("%").append(link).append("%").append(url.getURL());
         logger.debug(sb.toString());
         return sb.toString();
     }
